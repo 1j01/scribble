@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Font Recorder</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1">
+		<meta name="author" content="Isaiah Odhner">
+		<meta name="description" content="Scribblefonts!">
+		<meta name="keywords" content="1j01, font, scribble, typography, svg">
+		<link type="image/icon" rel="icon">
+		<script type="text/javascript" src="/kc.js"></script>
+        <style>
+            * {
+                user-select: none;
+                -moz-user-select: none;
+                -webkit-user-select: none;
+                cursor: default;
+                font-family: Arial, Helvetica;
+                -webkit-transition: all .8s ease-in-out;
+                text-align: center;
+                vertical-align: center;
+            }
+            a {
+                text-decoration: none;
+                color: #49A0C4;
+            }
+            a:hover {
+                color: #0AF;
+            }
+            html,body,#main {
+                width: 100%;
+                height: 100%;
+                padding: 0;
+                margin: 0;
+                border: 0;
+            }
+            .glyph {
+                stroke: rgba(25,200,255,0.5);
+                stroke-width: 1px;
+            }
+            
+            #bar span,#bar a {
+                -webkit-transition: all .2s ease-in-out;
+                cursor: pointer;
+                padding: 14px;
+            }
+            #bar span:hover,#bar a:hover {
+                background: rgba(0,0,0,0.1);
+            }
+            .start-recording {
+                color: black;
+            }
+            .stop-recording {
+                color: red;
+                -webkit-animation: pulse-red 1s ease-in-out infinite;
+                -webkit-animation-delay: .8s;
+            }
+            .gps_ring{
+                -webkit-animation-name: pulse-red;
+                -webkit-animation-duration: 1s;
+                -webkit-animation-timing-function: ease-in-out;
+                -webkit-animation-iteration-count: infinite;
+            }
+            @-webkit-keyframes pulse-red {
+                0% { text-shadow: 0 0 10px transparent; color: #A00;}
+                50% { text-shadow: 0 0 5px red; color: red;}
+                100% { text-shadow: 0 0 10px transparent; color: #A00;}
+            }
+            #glyph-prompt {
+                pointer-events: none;
+                font-size: 5em;
+                vertical-align: middle;
+                text-align: center;
+                font-family: cursive, Comic, "Comic Sans MS", Arial, Helvetica;
+                color: rgba(158, 155, 133, 0.5);
+            }
+            #bar {
+                padding: 5px;
+                margin-top: 50px;
+            }
+            #record-box {
+                background: #FFFFD0;
+                border: dashed gray 1px;
+                width: 100px;
+                height: 100px;
+                position: absolute;
+                left: 50%;
+                top: 50%;
+            }
+            svg, #glyph-prompt {
+                position: absolute;
+                left: 0;
+                top: 0;
+            }
+        </style>
+	</head>
+	<body>
+        <div id="main">
+            <div id="record-box">
+                <div id="glyph-prompt">A!</div>
+                <svg width=100 height=100>
+                    <path id="drawing" stroke="blue" stroke-width="2" fill="none"></path>
+                </svg>
+            </div>
+            <div id="bar">
+                <span id="record" title="Stop Recording" class="stop-recording">&#9673;</span>
+                <span id="clear" title="Clear this glyph" class="trash">♻</span>
+                <span id="previous-glyph" title="Previous glyph" class="choose-glyph">&larr;</span>
+                <span id="next-glyph" title="Next glyph" class="choose-glyph">&rarr;</span>
+                <span id="get-json" title="...for use in so many applications! For example, things that don't exist yet!">Get font in JSON format</span>
+                <span id="select-prompt-font" title="Set the font used in the glyph prompt">Select prompt font ▼</span>
+                <a href="font">Go render some text with this font!</a>
+            </div>
+        </div>
+    	<script type="text/javascript">
+        
+            mouse={x:0,y:0,down:false};
+            
+            font={glyphs:{},name:"hello world"};
+            svgFont={glyphs:{},name:"hello world"};
+            
+            for(var i=0;i<255;i++){font.glyphs[String.fromCharCode(i)]=[];}
+            for(var i=0;i<255;i++){svgFont.glyphs[String.fromCharCode(i)]="M0 0";}
+            
+            if(localStorage.font){font=JSON.parse(localStorage.font);}
+            if(localStorage.svgFont){svgFont=JSON.parse(localStorage.svgFont);}
+            
+            currentChr="A";
+            timeout=null;
+            
+            glyphPrompt=document.getElementById("glyph-prompt");
+            glyphPrompt.innerText=currentChr;
+            
+            path=document.getElementById("drawing");
+            drawGlyphSVG();
+            
+            box=document.getElementById("record-box");
+            box.addEventListener('mousedown', function(){mouse.down=true;});
+            document.body.addEventListener('mouseup', function(){mouse.down=false;});
+            box.addEventListener('mousemove', function(e){mouse.x=e.offsetX;mouse.y=e.offsetY;});
+            document.body.addEventListener('keydown', function(e){
+                var del=0;
+                if(e.keyCode==13) {del=+1;}
+                if(e.keyCode===8) {clearGlyph();return;}
+                if(e.keyCode===46) {clearGlyph();return;}
+                if(e.keyCode==37) {del=-1;}
+                if(e.keyCode==39) {del=+1;}
+                if(e.keyCode==-1) {return;}
+                
+                if(del!=0) setCurrentChr(String.fromCharCode(currentChr.charCodeAt(0)+del));
+                else setCurrentChr(String.fromCharCode(e.keyCode));
+                //console.log(e.keyCode, "pressed");
+            });
+            
+            document.getElementById("record").onclick=function(){
+                if(this.className==="stop-recording"){
+                    stopRecording();
+                    this.className="start-recording";
+                    this.title="Start Recording";
+                }else{
+                    startRecording();
+                    this.className="stop-recording";
+                    this.title="Stop Recording";
+                }
+            }
+            
+            document.getElementById("next-glyph").onclick=function(){
+                setCurrentChr(String.fromCharCode(currentChr.charCodeAt(0)+1));
+            }
+            document.getElementById("previous-glyph").onclick=function(){
+                setCurrentChr(String.fromCharCode(currentChr.charCodeAt(0)-1));
+            }
+            document.getElementById("clear").onclick=clearGlyph;
+            
+            startRecording();
+            function startRecording(){
+                var t=(new Date()).getTime();
+                timeout=setInterval(function () {
+                    var g=font.glyphs[currentChr];
+                    if(mouse.down){
+                        if(g.length==0 || g[g.length-1].p==0 || g[g.length-1].x!=mouse.x || g[g.length-1].y!=mouse.y){
+                            if(g.length==0 || g[g.length-1].p==0){
+                                //if(g.length!=0){
+                                    g.push({x:mouse.x,y:mouse.y,p:0.5,t:(new Date()).getTime()-t});
+                                    t=(new Date()).getTime();
+                                //}
+                                path.setAttribute("d",path.getAttribute("d")+" M "+mouse.x+" "+mouse.y);
+                                save();
+                            }
+                            g.push({x:mouse.x,y:mouse.y,p:1,t:(new Date()).getTime()-t});
+                            t=(new Date()).getTime();
+                            path.setAttribute("d",path.getAttribute("d")+" L "+mouse.x+" "+mouse.y);
+                            save();
+                        }
+                    }else{
+                        if(g.length!=0 && g[g.length-1].p!=0){
+                            g.push({x:mouse.x,y:mouse.y,p:0,t:(new Date()).getTime()-t});
+                            t=(new Date()).getTime();
+                            path.setAttribute("d",path.getAttribute("d")+" M "+mouse.x+" "+mouse.y);
+                            save();
+                        }
+                    }
+                }, 10);
+            }
+            function stopRecording(){
+               if(timeout){
+                   clearInterval(timeout);
+               }
+            }
+            function clearGlyph(){
+                font.glyphs[currentChr]=[];
+                path.setAttribute("d","M0 0");
+                save();
+            }
+            function drawGlyphSVG(){
+                path.setAttribute("d",svgFont.glyphs[currentChr]);
+            }
+            function save(){
+                /*svgFont.glyphs[currentChr]=path.getAttribute("d");
+                localStorage.font=JSON.stringify(font);
+                localStorage.svgFont=JSON.stringify(svgFont);*/
+            }
+            
+            function setCurrentChr(chr){
+                if(!font.glyphs[chr])return false;
+                currentChr=chr;
+                drawGlyphSVG();
+                glyphPrompt.innerText=chr;
+                return true;
+            }
+                                                                                    	</script>
+                                                                                                     
+                                                                                                          	</body>
+                                                </html>
