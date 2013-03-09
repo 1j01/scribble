@@ -3,8 +3,8 @@
 var PathNode={
     x: 0,
     y: 0,
-    x2: 0,//[optional]
-    y2: 0,//[optional]
+    //x2: 0,
+    //y2: 0,
     p: 1, //pressure!
     t: 10,//[optional] duration
     translate: function(x,y){
@@ -27,15 +27,17 @@ var Path={
         for(i=0; i<text.length; i++){
             var c=text[i];
             var g=font.glyphs[c];
+            var gx=0;
+            var gy=0;
             for(var j=0; j<g.length; j++){
-                var n=g[j];
-                if(j>0){
+                var n={x:g[j].x-gx,y:g[j].y-gy,p:g[j].p,t:g[j].t};
+                /*if(j>0){
                     n.x-=g[j-1].x;
                     n.y-=g[j-1].y;
                 }else{
                     n.x=1;
                     n.y=1;
-                }
+                }*/
                 this.addNode(n);
             }
             /*
@@ -96,13 +98,13 @@ var Path={
             this.translate(-w);
             width+=w;
         }
-        //this.translate(width);
-        this.translate(-3500,-7500);
+        this.translate(width);
+        //this.translate(-3500,-7500);
         //this.scale(0.3);
     },
     toSVG: function(svgElement){
-        var curx=this.x,
-            cury=this.y,
+        var curx=this.x, px=this.nodes[1].x,
+            cury=this.y, py=this.nodes[1].y,
             d="M"+curx+" "+cury; //<svg:path d="${d}"></path>
             //thenMove=false;
             //Possible bug: moving after setting d to moved.
@@ -111,41 +113,49 @@ var Path={
             if(n.x && n.y && (n.p>0)){
                 /*if(thenMove){
                     
-                }else */if(n.x2 && n.y2){
+                }else if(n.x2 && n.y2){
                     d+="q"+(n.x)+" "+(n.y)+" "+(n.x2)+" "+(n.y2)+"   ";
                     //d+="q"+n.x+" "+n.y+" "+n.x2+" "+n.y2+" ";
                 }else{
-                    d+="t"+(n.x)+" "+(n.y);
+                    d+="GORPGORPGORP"+(n.x)+" "+(n.y);
                     //d+="t"+n.x+" "+n.y;
-                }
-                curx+=n.x;
-                cury+=n.y;
+                }*/
+                //var nx=n.x-curx;
+                //var ny=n.y-cury;
+                //d += "l" +(nx)+ " " +(ny);
+                //curx += n.x-px;
+                //cury += n.y-py;
+                //d += "L" + curx + " " + cury;
+                d += "l"+n.x+" "+n.y;
             }else{
                 if(d.match(/[qlt]/i)){
-                    d+="z";
-                    
-                    var path=document.createElementNS("http://www.w3.org/2000/svg","path");
-                    path.setAttributeNS(null,"class","glyph");
-                    path.setAttributeNS(null,"d",d);
-                    path.setAttributeNS(null,"fill","rgba(0,0,0,0.5)");
-                    path.setAttributeNS(null,"stroke","black");
-                    svgElement.appendChild(path);
-                    console.log(d);
+                    //d+="z";
+                    //d+="m"
+                    //console.log(d);
                     
                 }
                 
                 //d="M"+curx+" "+cury;
-                d="M"+curx+" "+cury;
+                d += "M"+(curx+n.x)+" "+(cury+n.y);
             }
+            px=n.x;
+            py=n.y;
         }
+        d += "z";
         //? str+="z";
         //return str;
-        return d;
+        var path=document.createElementNS("http://www.w3.org/2000/svg","path");
+        path.setAttributeNS(null,"class","glyph");
+        path.setAttributeNS(null,"d",d);
+        //path.setAttributeNS(null,"fill","rgba(0,0,0,0)");
+        //path.setAttributeNS(null,"stroke","black");
+        svgElement.appendChild(path);
+        //return d;
     },
     addNode: function(node){
         this.nodes.push(node);
     },
-    addBreak: function(node){
+    addBreak: function(){
         var n=this.nodes[this.nodes.length-1];
         n.p=0;
         this.nodes.push(n);
