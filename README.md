@@ -8,10 +8,11 @@ The most notable feature is the handwriting simulator contained in scribblefonts
 
 Modules
 -------
-Scribble.js uses modules: pens, contexts, and in the case of scribblefonts.js, fonts. 
-A context is something like a canvas or svg interface. 
-A pen is bridges between a context and a drawing action. It has properties such as color size radius shape width height slant etc.
-A font consists of recorded data and a function to iterate over it.
+If scribble.js existed and used modules, it might look something like this:
+Scribble.js uses modules: pens, contexts, and (when using scribblefonts.js) fonts. 
+A context is an interface to something like a canvas or an svg. 
+A pen is the bridge between the context and a drawing action. It has properties such as color size radius shape width height slant etc.
+A font consists of a map of sets of paths handwritten and a function to iterate over it.
 
 Use Cases
 ---------
@@ -23,8 +24,10 @@ Scribble.js could be used in some poetry generator to make it look more like it 
 
 font.json
 ---------
-A sample font is given for testing, or convinience. 
-Fonts are of this form: 
+A sample font is given for testing, convinience, or whatever. Maybe you can find some other use for some, uh, typographic data. 
+
+Not that it matters, but fonts are of this form: 
+```json
 {
     //Glyphs is a map of glyphs (characters) to Paths.
     glyphs: {
@@ -41,3 +44,4 @@ Fonts are of this form:
     authour: "All Of This Is Optional",
     otherMetaData: "whatever"
 }
+```
