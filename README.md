@@ -27,16 +27,16 @@ font.json
 A sample font is given for testing, convinience, or whatever. Maybe you can find some other use for some, uh, typographic data. 
 
 Not that it matters, but fonts are of this form: 
-```json
-{
+```js
+var sudoFont = {
     //Glyphs is a map of glyphs (characters) to Paths.
+        //Paths are arrays of PathNodes.
+            //PathNodes are objects with position and pressure.
     glyphs: {
         "A":[{x,y,p},{x,y,p},{x,y,p},{x,y,p},{x,y,p},{x,y,p},{x,y,p}...],
         "B":[{x,y,p},{x,y,p},{x,y,p},{x,y,p},{x,y,p},{x,y,p},{x,y,p},{x,y,p}...],
         "C":[{x,y,p},{x,y,p},{x,y,p},{x,y,p},{x,y,p},{x,y,p}...],
         ...
-        //Paths are arrays of PathNodes.
-        //Nodes are objects with position and pressure.
     },
     
     //Optional metadata:
