@@ -15,6 +15,29 @@ A font consists of recorded data and a function to iterate over it.
 
 Use Cases
 ---------
-Scribble.js could be used in some poetry generator to help trick someone into reading a long composition.
 Scribble.js could be used to stylize a game. That'd look pretty neat.
-Scribble.js could be used in place of the unholy comic sans, if you are really set on handwriting and/or/um... can't find any other handwriting fonts.
+
+Scribble.js could be used in place of the unholy comic sans, if you are really set on handwriting and/or/um... can't find any other handwriting fonts? Well, I suppose this would still be better.
+
+Scribble.js could be used in some poetry generator to make it look more like it was a recording say to help trick someone into reading a really long "composition".
+
+font.json
+---------
+A sample font is given for testing, or convinience. 
+Fonts are of this form: 
+{
+    //Glyphs is a map of glyphs (characters) to Paths.
+    glyphs: {
+        "A":[{x,y,p},{x,y,p},{x,y,p},{x,y,p},{x,y,p},{x,y,p},{x,y,p}...],
+        "B":[{x,y,p},{x,y,p},{x,y,p},{x,y,p},{x,y,p},{x,y,p},{x,y,p},{x,y,p}...],
+        "C":[{x,y,p},{x,y,p},{x,y,p},{x,y,p},{x,y,p},{x,y,p}...],
+        ...
+        //Paths are arrays of PathNodes.
+        //Nodes are objects with position and pressure.
+    },
+    
+    //Optional metadata:
+    name: "Hello World!", 
+    authour: "All Of This Is Optional",
+    otherMetaData: "whatever"
+}
