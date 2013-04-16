@@ -2,8 +2,8 @@ Scribble.js
 ===========
 Scribble.js draws scribbly looking things. 
 
-Scribblefonts.js
-----------------
+Handwriting Simulator
+---------------------
 The most notable feature is the handwriting simulator contained in scribblefonts.js. It allows you to make handwriting far more belivable than regular fonts, even ones that choose between multiple glyphs per character.
 
 Modules
@@ -29,6 +29,8 @@ A sample font is given for testing, convinience, or whatever. Maybe you can find
 Not that it matters, but fonts are of this form: 
 ```js
 var sudoFont = {
+    
+    name: "Hello World",
     //Glyphs is a map of glyphs (characters) to Paths.
         //Paths are arrays of PathNodes.
             //PathNodes are objects with position and pressure.
@@ -40,8 +42,7 @@ var sudoFont = {
     },
     
     //Optional metadata:
-    name: "Hello World!", 
-    authour: "All Of This Is Optional",
+    metaData: "This stuff Is Optional",
     otherMetaData: "whatever"
-}
+};
 ```
