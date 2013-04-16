@@ -1,6 +1,8 @@
 Scribble.js
 ===========
 Scribble.js draws scribbly looking things. 
+[Live here.](http://1j01.koding.com/scribble/font-recorder)
+
 
 Handwriting Simulator
 ---------------------
