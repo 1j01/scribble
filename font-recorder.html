@@ -9,226 +9,392 @@
 		<meta name="keywords" content="1j01, font, scribble, typography, svg">
 		<link type="image/icon" rel="icon">
 		<script type="text/javascript" src="/kc.js"></script>
-        <style>
-            * {
-                user-select: none;
-                -moz-user-select: none;
-                -webkit-user-select: none;
-                cursor: default;
-                font-family: Arial, Helvetica;
-                -webkit-transition: all .8s ease-in-out;
-                text-align: center;
-                vertical-align: center;
-            }
-            a {
-                text-decoration: none;
-                color: #49A0C4;
-            }
-            a:hover {
-                color: #0AF;
-            }
-            html,body,#main {
-                width: 100%;
-                height: 100%;
-                padding: 0;
-                margin: 0;
-                border: 0;
-            }
-            .glyph {
-                stroke: rgba(25,200,255,0.5);
-                stroke-width: 1px;
-            }
-            
-            #bar span,#bar a {
-                -webkit-transition: all .2s ease-in-out;
-                cursor: pointer;
-                padding: 14px;
-            }
-            #bar span:hover,#bar a:hover {
-                background: rgba(0,0,0,0.1);
-            }
-            .start-recording {
-                color: black;
-            }
-            .stop-recording {
-                color: red;
-                -webkit-animation: pulse-red 1s ease-in-out infinite;
-                -webkit-animation-delay: .8s;
-            }
-            .gps_ring{
-                -webkit-animation-name: pulse-red;
-                -webkit-animation-duration: 1s;
-                -webkit-animation-timing-function: ease-in-out;
-                -webkit-animation-iteration-count: infinite;
-            }
-            @-webkit-keyframes pulse-red {
-                0% { text-shadow: 0 0 10px transparent; color: #A00;}
-                50% { text-shadow: 0 0 5px red; color: red;}
-                100% { text-shadow: 0 0 10px transparent; color: #A00;}
-            }
-            #glyph-prompt {
-                pointer-events: none;
-                font-size: 5em;
-                vertical-align: middle;
-                text-align: center;
-                font-family: cursive, Comic, "Comic Sans MS", Arial, Helvetica;
-                color: rgba(158, 155, 133, 0.5);
-            }
-            #bar {
-                padding: 5px;
-                margin-top: 50px;
-            }
-            #record-box {
-                background: #FFFFD0;
-                border: dashed gray 1px;
-                width: 100px;
-                height: 100px;
-                position: absolute;
-                left: 50%;
-                top: 50%;
-            }
-            svg, #glyph-prompt {
-                position: absolute;
-                left: 0;
-                top: 0;
-            }
-        </style>
+		<style>
+			* {
+				user-select: none;
+				-moz-user-select: none;
+				-webkit-user-select: none;
+				cursor: default;
+				font-family: Arial, Helvetica;
+				-webkit-transition: all .8s ease-in-out;
+				text-align: center;
+				vertical-align: center;
+			}
+			a {
+				some-text-decoration: none;
+				color: #49A0C4;
+			}
+			a:hover {
+				color: #0AF;
+			}
+			html, body {
+				width: 100%;
+				height: 100%;
+				padding: 0;
+				margin: 0;
+				border: 0;
+			}
+			.glyph {
+				stroke: rgba(25,200,255,0.5);
+				stroke-width: 1px;
+			}
+			#bar sep {
+				background: black;
+				width: 1px;
+				height: 30px;
+				padding: 0px;
+				margin-left: 4px;
+				margin-bottom: -10px;
+				box-shadow: 0 0 5px gray;
+				opacity: 0.2;
+			}
+			#bar .item, #bar a {
+				padding: 14px;
+				display: inline-block;
+				outline: 0;
+				border: 0;
+				border-radius: 2px;
+			}
+			#bar * {
+				-webkit-transition: all .2s ease-in-out;
+				cursor: pointer;
+			}
+			#bar .item:hover {
+				background: rgba(0,0,0,0.05);
+				box-shadow: 0 0 10px rgba(0,0,0,0.05) inset;
+			}
+			#bar .item:active {
+				background: rgba(0,0,0,0.1);
+				box-shadow: 0 0 10px rgba(0,0,0,0.1) inset;
+			}
+			.start-recording {
+				color: #A00;
+			}
+			.stop-recording {
+				-webkit-animation: pulse-red 1s ease-in-out infinite;
+				-webkit-animation-delay: .0s;
+			}
+			@-webkit-keyframes pulse-red {
+				0% { text-shadow: 0 0 10px transparent; color: #A00;}
+				50% { text-shadow: 0 0 5px #F00; color: #F00;}
+				100% { text-shadow: 0 0 10px transparent; color: #A00;}
+			}
+			#glyph-prompt {
+				pointer-events: none;
+				font-size: 5em;
+				vertical-align: middle;
+				text-align: center;
+				font-family: cursive, comic, Helvetica;
+				color: rgb(158, 155, 133);
+				opacity: 0.5;
+			}
+			#glyph-prompt.highlight {
+				color: black;
+				text-shadow: 0 0 5px white, 5px 5px 10px orange inset;
+			}
+			#bar {
+				padding: 5px;
+				padding-top: 50px;
+			}
+			#record-box {
+				background: #FFFFD0;
+				border: dashed gray 1px;
+				width: 100px;
+				height: 100px;
+				position: absolute;
+				left: 50%;
+				top: 50%;
+				margin-left: -50px;
+				margin-top: -50px;
+			}
+			svg, #glyph-prompt {
+				position: absolute;
+				left: 0;
+				top: 0;
+			}
+			#shadow.hidden{
+				opacity: 0;
+				pointer-events: none;
+			}
+			#shadow {
+				background: rgba(0,0,0,0.5);
+				position: fixed;
+				left:0;top:0;bottom:0;right:0;
+				pointer-events: all;
+			}
+			#json {
+				-webkit-transition: none;
+				position: fixed;z-index:40;
+				left:10%;right:10%;top:50px;bottom:50px;
+				color: white;
+				background: rgba(0,0,0,0.5);
+				outline: 1px solid white;
+				resize: none;
+				font-size: 3px;
+				user-select: text;
+				-moz-user-select: text;
+				-webkit-user-select: text;
+			}
+			.select{
+				position: relative;
+			}
+			ul {
+				position: absolute;
+				top: 40px;
+				left: 0;
+				right: 0;
+				z-index: 50;
+				list-style-type: none;
+				max-height: 70vh;
+				overflow: auto;
+				background: white;
+				box-shadow: 0 -5px 0 white, 0 0 10px rgba(0,0,0,0.5);
+				border-radius: 2px;
+				margin: 0; padding: 5px;
+			}
+			li {
+				text-align: left;
+				border-radius: 2px;
+				padding: 5px;
+			}
+			li:hover {
+				background: rgba(0,0,0,0.05);
+				box-shadow: 0 0 10px rgba(0,0,0,0.05) inset;
+			}
+			li:active {
+				background: rgba(0,0,0,0.1);
+				box-shadow: 0 0 10px rgba(0,0,0,0.1) inset;
+			}
+			.hidden {
+				opacity: 0;
+				pointer-events: none;
+			}
+		</style>
 	</head>
 	<body>
-        <div id="main">
-            <div id="record-box">
-                <div id="glyph-prompt">A!</div>
-                <svg width=100 height=100>
-                    <path id="drawing" stroke="blue" stroke-width="2" fill="none"></path>
-                </svg>
-            </div>
-            <div id="bar">
-                <span id="record" title="Stop Recording" class="stop-recording">&#9673;</span>
-                <span id="clear" title="Clear this glyph" class="trash">♻</span>
-                <span id="previous-glyph" title="Previous glyph" class="choose-glyph">&larr;</span>
-                <span id="next-glyph" title="Next glyph" class="choose-glyph">&rarr;</span>
-                <span id="get-json" title="...for use in so many applications! For example, things that don't exist yet!">Get font in JSON format</span>
-                <span id="select-prompt-font" title="Set the font used in the glyph prompt">Select prompt font ▼</span>
-                <a href="font">Go render some text with this font!</a>
-            </div>
-        </div>
-    	<script type="text/javascript">
-        
-            mouse={x:0,y:0,down:false};
-            
-            font={glyphs:{},name:"hello world"};
-            svgFont={glyphs:{},name:"hello world"};
-            
-            for(var i=0;i<255;i++){font.glyphs[String.fromCharCode(i)]=[];}
-            for(var i=0;i<255;i++){svgFont.glyphs[String.fromCharCode(i)]="M0 0";}
-            
-            if(localStorage.font){font=JSON.parse(localStorage.font);}
-            if(localStorage.svgFont){svgFont=JSON.parse(localStorage.svgFont);}
-            
-            currentChr="A";
-            timeout=null;
-            
-            glyphPrompt=document.getElementById("glyph-prompt");
-            glyphPrompt.innerText=currentChr;
-            
-            path=document.getElementById("drawing");
-            drawGlyphSVG();
-            
-            box=document.getElementById("record-box");
-            box.addEventListener('mousedown', function(){mouse.down=true;});
-            document.body.addEventListener('mouseup', function(){mouse.down=false;});
-            box.addEventListener('mousemove', function(e){mouse.x=e.offsetX;mouse.y=e.offsetY;});
-            document.body.addEventListener('keydown', function(e){
-                var del=0;
-                if(e.keyCode==13) {del=+1;}
-                if(e.keyCode===8) {clearGlyph();return;}
-                if(e.keyCode===46) {clearGlyph();return;}
-                if(e.keyCode==37) {del=-1;}
-                if(e.keyCode==39) {del=+1;}
-                if(e.keyCode==-1) {return;}
-                
-                if(del!=0) setCurrentChr(String.fromCharCode(currentChr.charCodeAt(0)+del));
-                else setCurrentChr(String.fromCharCode(e.keyCode));
-                //console.log(e.keyCode, "pressed");
-            });
-            
-            document.getElementById("record").onclick=function(){
-                if(this.className==="stop-recording"){
-                    stopRecording();
-                    this.className="start-recording";
-                    this.title="Start Recording";
-                }else{
-                    startRecording();
-                    this.className="stop-recording";
-                    this.title="Stop Recording";
-                }
-            }
-            
-            document.getElementById("next-glyph").onclick=function(){
-                setCurrentChr(String.fromCharCode(currentChr.charCodeAt(0)+1));
-            }
-            document.getElementById("previous-glyph").onclick=function(){
-                setCurrentChr(String.fromCharCode(currentChr.charCodeAt(0)-1));
-            }
-            document.getElementById("clear").onclick=clearGlyph;
-            
-            startRecording();
-            function startRecording(){
-                var t=(new Date()).getTime();
-                timeout=setInterval(function () {
-                    var g=font.glyphs[currentChr];
-                    if(mouse.down){
-                        if(g.length==0 || g[g.length-1].p==0 || g[g.length-1].x!=mouse.x || g[g.length-1].y!=mouse.y){
-                            if(g.length==0 || g[g.length-1].p==0){
-                                //if(g.length!=0){
-                                    g.push({x:mouse.x,y:mouse.y,p:0.5,t:(new Date()).getTime()-t});
-                                    t=(new Date()).getTime();
-                                //}
-                                path.setAttribute("d",path.getAttribute("d")+" M "+mouse.x+" "+mouse.y);
-                                save();
-                            }
-                            g.push({x:mouse.x,y:mouse.y,p:1,t:(new Date()).getTime()-t});
-                            t=(new Date()).getTime();
-                            path.setAttribute("d",path.getAttribute("d")+" L "+mouse.x+" "+mouse.y);
-                            save();
-                        }
-                    }else{
-                        if(g.length!=0 && g[g.length-1].p!=0){
-                            g.push({x:mouse.x,y:mouse.y,p:0,t:(new Date()).getTime()-t});
-                            t=(new Date()).getTime();
-                            path.setAttribute("d",path.getAttribute("d")+" M "+mouse.x+" "+mouse.y);
-                            save();
-                        }
-                    }
-                }, 10);
-            }
-            function stopRecording(){
-               if(timeout){
-                   clearInterval(timeout);
-               }
-            }
-            function clearGlyph(){
-                font.glyphs[currentChr]=[];
-                path.setAttribute("d","M0 0");
-                save();
-            }
-            function drawGlyphSVG(){
-                path.setAttribute("d",svgFont.glyphs[currentChr]);
-            }
-            function save(){
-                /*svgFont.glyphs[currentChr]=path.getAttribute("d");
-                localStorage.font=JSON.stringify(font);
-                localStorage.svgFont=JSON.stringify(svgFont);*/
-            }
-            
-            function setCurrentChr(chr){
-                if(!font.glyphs[chr])return false;
-                currentChr=chr;
-                drawGlyphSVG();
-                glyphPrompt.innerText=chr;
-                return true;
-            }
-                                                                                    	</script>
-                                                                                                     
-                                                                                                          	</body>
-                                                </html>
+		<div id="record-box">
+			<div id="glyph-prompt">wut</div>
+			<svg width=100 height=100>
+				<path id="drawing" stroke="blue" stroke-width="2" fill="none"></path>
+			</svg>
+		</div>
+		<div id="bar">
+			<span id="record" class="stop-recording item" title="Stop Recording">●</span><sep></sep>
+			<span id="previous-glyph" class="choose-glyph item" title="Previous glyph">&larr;</span><sep></sep>
+			<span id="next-glyph" class="choose-glyph item" title="Next glyph">&rarr;</span><sep></sep>
+			<span id="clear" class="trash item" title="Clear this glyph">Ⓧ&nbsp;&nbsp;Clear</span><sep></sep>
+			<span id="change-prompt-font" title="Set the font used in the glyph prompt" class="select"><span class="placeholder item">Change prompt font</span></span><sep></sep>
+			<span id="get-json" class="item" title="...for use in so many applications! For example, things that don't exist yet!">Get font in JSON format</span><sep></sep>
+			<a href="font" class="item">Go render some text with this font!</a>
+		</div>
+		<div id="shadow" class="hidden">
+			<textarea id="json"></textarea>
+		</div>
+		<script type="text/javascript">
+			noDataURIs=false;
+			var data = new Image();
+			data.onload = data.onerror = function(){
+				if(this.width != 1 || this.height != 1){
+					noDataURIs=true;
+				}
+			}
+			data.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==";
+
+			mouse={x:0,y:0,down:false};
+			
+			font={glyphs:{},name:"hello world"};
+			svgFont={glyphs:{},name:"hello world"};
+			
+			for(var i=0;i<255;i++){font.glyphs[String.fromCharCode(i)]=[];}
+			for(var i=0;i<255;i++){svgFont.glyphs[String.fromCharCode(i)]="M0 0";}
+			
+			if(localStorage.font){font=JSON.parse(localStorage.font);}
+			if(localStorage.svgFont){svgFont=JSON.parse(localStorage.svgFont);}
+			
+			currentChr="A";
+			timeout=null;
+			
+			$glyphPrompt=$("#glyph-prompt");
+			$glyphPrompt.innerText=currentChr;
+			
+			$path=$("#drawing");
+			drawGlyphSVG();
+			
+			$box=$("#record-box");
+			$box.addEventListener("mousedown", function(){mouse.down=true;});
+			document.body.addEventListener("mouseup", function(){mouse.down=false;});
+			$box.addEventListener("mousemove", function(e){mouse.x=e.offsetX;mouse.y=e.offsetY;});
+			document.body.addEventListener("keydown", function(e){
+				var del=0;
+				if(e.keyCode==13) {del=+1;}
+				if(e.keyCode===8) {clearGlyph();return;}
+				if(e.keyCode===46) {clearGlyph();return;}
+				if(e.keyCode==37) {del=-1;}
+				if(e.keyCode==39) {del=+1;}
+				if(e.keyCode==-1) {return;}
+				
+				if(del!=0) setCurrentChr(String.fromCharCode(currentChr.charCodeAt(0)+del));
+				else setCurrentChr(String.fromCharCode(e.keyCode));
+				//console.log(e.keyCode, "pressed");
+			});
+			
+			var fonts='cursive|Bradley Hand ITC|Comic Sans MS|serif|sans-serif|fantasy|Arial|Arial Black|Arial Narrow|Arial Rounded MT Bold|Bookman Old Style|Century|Century Gothic|Courier|Courier New|Georgia|Gentium|Impact|King|Lucida Console|Lalit|Modena|Monotype Corsiva|Papyrus|Tahoma|TeX|Times|Times New Roman|Trebuchet MS|Verdana|Verona|monospace'
+				.split("|");
+			//var $changeFont=$("#select-prompt-font");
+			var $changeFont=$("#change-prompt-font");
+			var $ul=E("ul");
+			$ul.className="hidden"
+			for(var i=0; i<fonts.length; i++){
+				var f=fonts[i];
+				/*var $op=document.createElement("option");
+				$op.innerText=f;
+				$op.value=f;
+				$op.style.fontFamily=f;
+				$changeFont.appendChild($op);*/
+				var $li=E("li");
+				$li.innerText=f;
+				$li.value=f;
+				$li.style.fontFamily=f;
+				$ul.appendChild($li);
+				$li.onclick=function(f){
+					return function(){
+						$("#glyph-prompt").style.fontFamily=f;
+					};
+				}(f);
+			}
+			$changeFont.appendChild($ul);
+			dontClose="!";
+			$changeFont.onclick=function(){
+				$ul.className = $ul.className=="hidden"?"":"hidden";
+				dontClose="!";
+			};
+			$("body").onclick=function(){
+				if(dontClose){
+					dontClose=false;
+					return;
+				}
+				$ul.className = "hidden";
+				return true;
+			};
+			/*$changeFont.onchange=function(){
+				var f=$changeFont.value;
+				if(f.match(/ /)){
+					f='"'+f+'"';
+				}
+				$changeFont.blur();
+				//$("#json").focus();
+				$("#glyph-prompt").style.fontFamily=f;
+			};*/
+			$changeFont.onmouseover=function(){
+				$("#glyph-prompt").className="highlight";
+			};
+			$changeFont.onmouseout=function(){
+				$("#glyph-prompt").className="";
+			};
+			
+			$("#record").onclick=function(){
+				if(this.className==="stop-recording"){
+					stopRecording();
+					this.className="start-recording";
+					this.title="Start Recording";
+				}else{
+					startRecording();
+					this.className="stop-recording";
+					this.title="Stop Recording";
+				}
+			};
+			if(noDataURIs){
+				$("#get-json").onclick=function(){
+					if(!font.name || font.name=="hello world"){
+						font.name=font.name||prompt("Name your font:");
+						save();
+					}
+					$("#shadow").className="shown shadow";
+					$("#json").value=localStorage["font"];
+					$("#json").select();
+				};
+				$("#shadow").onclick=function(){
+					$("#shadow").className="hidden shadow";
+					$("#json").value="g'bye";
+				};
+			}else{
+				$("#get-json").onclick=function(){
+					if(!font.name || font.name=="hello world"){
+						font.name=font.name||prompt("Name your font:");
+						save();
+					}
+					window.open("data:text/json,"+localStorage["font"]);
+				};
+			}
+			
+			$("#next-glyph").onclick=function(){
+				setCurrentChr(String.fromCharCode(currentChr.charCodeAt(0)+1));
+			};
+			$("#previous-glyph").onclick=function(){
+				setCurrentChr(String.fromCharCode(currentChr.charCodeAt(0)-1));
+			};
+			$("#clear").onclick=clearGlyph;
+			
+			startRecording();
+			function startRecording(){
+				var t=(new Date()).getTime();
+				timeout=setInterval(function () {
+					var g=font.glyphs[currentChr];
+					if(mouse.down){
+						if(g.length==0 || g[g.length-1].p==0 || g[g.length-1].x!=mouse.x || g[g.length-1].y!=mouse.y){
+							if(g.length==0 || g[g.length-1].p==0){
+								//if(g.length!=0){
+									g.push({x:mouse.x,y:mouse.y,p:0.5,t:(new Date()).getTime()-t});
+									t=(new Date()).getTime();
+								//}
+								$path.setAttribute("d",$path.getAttribute("d")+" M "+mouse.x+" "+mouse.y);
+								save();
+							}
+							g.push({x:mouse.x,y:mouse.y,p:1,t:(new Date()).getTime()-t});
+							t=(new Date()).getTime();
+							$path.setAttribute("d",$path.getAttribute("d")+" L "+mouse.x+" "+mouse.y);
+							//save();
+						}
+					}else{
+						if(g.length!=0 && g[g.length-1].p!=0){
+							g.push({x:mouse.x,y:mouse.y,p:0,t:(new Date()).getTime()-t});
+							t=(new Date()).getTime();
+							$path.setAttribute("d",$path.getAttribute("d")+" M "+mouse.x+" "+mouse.y);
+							save();
+						}
+					}
+				}, 10);
+			}
+			function stopRecording(){
+			   if(timeout){
+				   clearInterval(timeout);
+			   }
+			}
+			function clearGlyph(){
+				font.glyphs[currentChr]=[];
+				$path.setAttribute("d","M0 0");
+				save();
+			}
+			function drawGlyphSVG(){
+				$path.setAttribute("d",svgFont.glyphs[currentChr]);
+			}
+			function save(){
+				svgFont.glyphs[currentChr]=$path.getAttribute("d");
+				localStorage.font=JSON.stringify(font);
+				localStorage.svgFont=JSON.stringify(svgFont);
+			}
+			
+			function setCurrentChr(chr){
+				if(!font.glyphs[chr])return false;
+				currentChr=chr;
+				drawGlyphSVG();
+				$glyphPrompt.innerText=chr;
+				return true;
+			}
+			
+function E(t,c){var $e=document.createElement(t);if(c)$e.className="c";return $e;}
+function $(s){return document.querySelector(s);}
+function $$(s){return document.querySelectorAll(s);}									</script>
+																									 
+																										  	</body>
+												</html>
