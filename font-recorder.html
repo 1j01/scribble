@@ -38,7 +38,11 @@
 				stroke: rgba(25,200,255,0.5);
 				stroke-width: 1px;
 			}
-			#bar sep {
+			#bar * {
+				-webkit-transition: all .2s ease-in-out;
+				cursor: pointer;
+			}
+			sep {
 				background: black;
 				width: 1px;
 				height: 30px;
@@ -46,38 +50,42 @@
 				margin-left: 4px;
 				margin-bottom: -10px;
 				box-shadow: 0 0 5px gray;
-				opacity: 0.2;
+				opacity: 0.1;
+				display: inline-block;
 			}
-			#bar .item, #bar a {
+			#bar > .item, #bar > * > .item {
 				padding: 14px;
 				display: inline-block;
 				outline: 0;
 				border: 0;
+			}
+			.item {
 				border-radius: 2px;
 			}
-			#bar * {
-				-webkit-transition: all .2s ease-in-out;
-				cursor: pointer;
-			}
-			#bar .item:hover {
+			.item:hover {
 				background: rgba(0,0,0,0.05);
 				box-shadow: 0 0 10px rgba(0,0,0,0.05) inset;
 			}
-			#bar .item:active {
+			.item:active {
 				background: rgba(0,0,0,0.1);
 				box-shadow: 0 0 10px rgba(0,0,0,0.1) inset;
 			}
+			.item.active {
+				background: rgba(0,0,0,0.05);
+				box-shadow: 0 0 5px rgba(0,0,0,0.1) inset;
+			}
 			.start-recording {
 				color: #A00;
+				-webkit-animation: pulse-red 1s ease-in-out 1;
 			}
 			.stop-recording {
+				color: #A00;
 				-webkit-animation: pulse-red 1s ease-in-out infinite;
 				-webkit-animation-delay: .0s;
 			}
 			@-webkit-keyframes pulse-red {
-				0% { text-shadow: 0 0 10px transparent; color: #A00;}
+				0%,100% { text-shadow: 0 0 10px transparent; color: #A00;}
 				50% { text-shadow: 0 0 5px #F00; color: #F00;}
-				100% { text-shadow: 0 0 10px transparent; color: #A00;}
 			}
 			#glyph-prompt {
 				pointer-events: none;
@@ -135,7 +143,7 @@
 				-moz-user-select: text;
 				-webkit-user-select: text;
 			}
-			.select{
+			.select {
 				position: relative;
 			}
 			ul {
@@ -149,25 +157,24 @@
 				overflow: auto;
 				background: white;
 				box-shadow: 0 -5px 0 white, 0 0 10px rgba(0,0,0,0.5);
-				border-radius: 2px;
+				border-radius: 3px;
 				margin: 0; padding: 5px;
 			}
 			li {
 				text-align: left;
-				border-radius: 2px;
+			}
+			li.item {
 				padding: 5px;
-			}
-			li:hover {
-				background: rgba(0,0,0,0.05);
-				box-shadow: 0 0 10px rgba(0,0,0,0.05) inset;
-			}
-			li:active {
-				background: rgba(0,0,0,0.1);
-				box-shadow: 0 0 10px rgba(0,0,0,0.1) inset;
+				margin: 2px;
 			}
 			.hidden {
 				opacity: 0;
 				pointer-events: none;
+			}
+			::-webkit-scrollbar,::-webkit-scrollbar-thumb {
+				width: 5px;
+				border-radius: 2px;
+				background: rgba(0,0,0,0.2);
 			}
 		</style>
 	</head>
@@ -231,6 +238,8 @@
 				if(e.keyCode===46) {clearGlyph();return;}
 				if(e.keyCode==37) {del=-1;}
 				if(e.keyCode==39) {del=+1;}
+				if(e.keyCode==38) {return;}
+				if(e.keyCode==40) {return;}
 				if(e.keyCode==-1) {return;}
 				
 				if(del!=0) setCurrentChr(String.fromCharCode(currentChr.charCodeAt(0)+del));
@@ -251,14 +260,18 @@
 				$op.value=f;
 				$op.style.fontFamily=f;
 				$changeFont.appendChild($op);*/
-				var $li=E("li");
+				var $li=E("li","item");
 				$li.innerText=f;
-				$li.value=f;
+				//$li.value=f;
 				$li.style.fontFamily=f;
 				$ul.appendChild($li);
 				$li.onclick=function(f){
 					return function(){
 						$("#glyph-prompt").style.fontFamily=f;
+						$lis=$$(".select li");
+						for(var i=0; i<$lis.length; i++){
+							$lis[i].className = "item"+(($lis[i].innerText==f)?" active":"");
+						}
 					};
 				}(f);
 			}
@@ -268,6 +281,11 @@
 				$ul.className = $ul.className=="hidden"?"":"hidden";
 				dontClose="!";
 			};
+			var f="cursive";
+			$lis=$$(".select li");
+			for(var i=0; i<$lis.length; i++){
+				$lis[i].className = "item"+(($lis[i].innerText==f)?" active":"");
+			}
 			$("body").onclick=function(){
 				if(dontClose){
 					dontClose=false;
@@ -293,16 +311,30 @@
 			};
 			
 			$("#record").onclick=function(){
-				if(this.className==="stop-recording"){
+				if(this.title=="Stop Recording"){
 					stopRecording();
-					this.className="start-recording";
+					//this.style.color=getComputedStyle(this).color;
+					//this.style.textShadow=getComputedStyle(this).textShadow;
+					this.addEventListener('webkitTransitionEnd', pulseEnd, false);
+					this.addEventListener('oTransitionEnd', pulseEnd, false);
+					this.addEventListener('transitionEnd', pulseEnd, false);
+					this.addEventListener('transitionend', pulseEnd, false);
+					this.className="item start-recording";
 					this.title="Start Recording";
 				}else{
 					startRecording();
-					this.className="stop-recording";
+					this.className="item stop-recording";
 					this.title="Stop Recording";
+					this.removeEventListener('webkitTransitionEnd', pulseEnd, false);
+					this.removeEventListener('oTransitionEnd', pulseEnd, false);
+					this.removeEventListener('transitionEnd', pulseEnd, false);
+					this.removeEventListener('transitionend', pulseEnd, false);
 				}
 			};
+			function pulseEnd(){
+				//$("#record").className="item start-recording";
+				console.log("pulseEnd");
+			}
 			if(noDataURIs){
 				$("#get-json").onclick=function(){
 					if(!font.name || font.name=="hello world"){
@@ -392,7 +424,7 @@
 				return true;
 			}
 			
-function E(t,c){var $e=document.createElement(t);if(c)$e.className="c";return $e;}
+function E(t,c){var $e=document.createElement(t);if(c)$e.className=c;return $e;}
 function $(s){return document.querySelector(s);}
 function $$(s){return document.querySelectorAll(s);}									</script>
 																									 
