@@ -7,8 +7,6 @@
 		<meta name="author" content="Isaiah Odhner">
 		<meta name="description" content="Scribblefonts!">
 		<meta name="keywords" content="1j01, font, scribble, typography, svg">
-		<link type="image/icon" rel="icon">
-		<script type="text/javascript" src="/kc.js"></script>
 		<style>
 			* {
 				user-select: none;
@@ -21,7 +19,6 @@
 				vertical-align: center;
 			}
 			a {
-				some-text-decoration: none;
 				color: #49A0C4;
 			}
 			a:hover {
@@ -53,7 +50,7 @@
 				opacity: 0.1;
 				display: inline-block;
 			}
-			#bar > .item, #bar > * > .item {
+			#bar .item {
 				padding: 14px;
 				display: inline-block;
 				outline: 0;
@@ -171,7 +168,8 @@
 				opacity: 0;
 				pointer-events: none;
 			}
-			::-webkit-scrollbar,::-webkit-scrollbar-thumb {
+			::-webkit-scrollbar,
+			::-webkit-scrollbar-thumb {
 				width: 5px;
 				border-radius: 2px;
 				background: rgba(0,0,0,0.2);
@@ -197,7 +195,7 @@
 		<div id="shadow" class="hidden">
 			<textarea id="json"></textarea>
 		</div>
-		<script type="text/javascript">
+		<script>
 			noDataURIs=false;
 			var data = new Image();
 			data.onload = data.onerror = function(){
@@ -212,11 +210,24 @@
 			font={glyphs:{},name:"hello world"};
 			svgFont={glyphs:{},name:"hello world"};
 			
-			for(var i=0;i<255;i++){font.glyphs[String.fromCharCode(i)]=[];}
-			for(var i=0;i<255;i++){svgFont.glyphs[String.fromCharCode(i)]="M0 0";}
+			for(var i=0;i<255;i++){
+				var c = String.fromCharCode(i);
+				font.glyphs[c]=[];
+				svgFont.glyphs[c]="M0 0";
+			}
 			
-			if(localStorage.font){font=JSON.parse(localStorage.font);}
-			if(localStorage.svgFont){svgFont=JSON.parse(localStorage.svgFont);}
+			try {
+				var localFont = localStorage.font;
+				var localSVGFont = localStorage.svgFont;
+				try {
+					if(localFont){font=JSON.parse(localStorage.font);}
+					if(localSVGFont){svgFont=JSON.parse(localStorage.svgFont);}
+				} catch(e) {
+					alert("Failed to parse fonts!"+e.message);
+				}
+			} catch(e) {
+				alert("Failed to access local storage. Please 'allow cookies'");
+			}
 			
 			currentChr="A";
 			timeout=null;
@@ -233,14 +244,14 @@
 			$box.addEventListener("mousemove", function(e){mouse.x=e.offsetX;mouse.y=e.offsetY;});
 			document.body.addEventListener("keydown", function(e){
 				var del=0;
-				if(e.keyCode==13) {del=+1;}
-				if(e.keyCode===8) {clearGlyph();return;}
-				if(e.keyCode===46) {clearGlyph();return;}
-				if(e.keyCode==37) {del=-1;}
-				if(e.keyCode==39) {del=+1;}
-				if(e.keyCode==38) {return;}
-				if(e.keyCode==40) {return;}
-				if(e.keyCode==-1) {return;}
+				if(e.keyCode==13) del=+1;
+				if(e.keyCode===8) return clearGlyph();
+				if(e.keyCode===46) return clearGlyph();
+				if(e.keyCode==37) del=-1;
+				if(e.keyCode==39) del=+1;
+				if(e.keyCode==38) return;
+				if(e.keyCode==40) return;
+				if(e.keyCode==-1) return;
 				
 				if(del!=0) setCurrentChr(String.fromCharCode(currentChr.charCodeAt(0)+del));
 				else setCurrentChr(String.fromCharCode(e.keyCode));
@@ -424,9 +435,9 @@
 				return true;
 			}
 			
-function E(t,c){var $e=document.createElement(t);if(c)$e.className=c;return $e;}
-function $(s){return document.querySelector(s);}
-function $$(s){return document.querySelectorAll(s);}									</script>
-																									 
-																										  	</body>
-												</html>
+			function E(t,c){var $e=document.createElement(t);if(c)$e.className=c;return $e;}
+			function $(s){return document.querySelector(s);}
+			function $$(s){return document.querySelectorAll(s);}
+		</script>
+	</body>
+</html>
