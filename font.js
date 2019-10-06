@@ -62,16 +62,16 @@ var Path={
                         if(n.length===6){
                             //Approximation of quadratic beizer...
                             //this.addNode({x:n[0],y:n[1],t:'l'});
-       //                     //var startX=n[0],
-  //                              control1X=n[2],
-  //                              control2X=n[4],
-  //                              endX=n[6],
- //                               startY=n[1],
- //                               control1Y=n[3],
-  //                              control2Y=n[5],
-//                                endY=n[7];
-//                            var controlX = -0.25*startX + 0.75*control1X + 0.75*control2X -0.25*endX;
-//                            var controlY = -0.25*startY + 0.75*control1Y + 0.75*control2Y -0.25*endY;
+                            // var startX=n[0],
+                            //     control1X=n[2],
+                            //     control2X=n[4],
+                            //     endX=n[6],
+                            //     startY=n[1],
+                            //     control1Y=n[3],
+                            //     control2Y=n[5],
+                            //     endY=n[7];
+                            // var controlX = -0.25*startX + 0.75*control1X + 0.75*control2X -0.25*endX;
+                            // var controlY = -0.25*startY + 0.75*control1Y + 0.75*control2Y -0.25*endY;
                             console.log(n);
                             this.addNode({x:n[0],y:n[1],x2:n[5],y2:n[6],t:'q'});
                             //this.addNode({x:n[2],y:n[3],x2:n[4],y2:n[5],t:'q'});
@@ -94,7 +94,7 @@ var Path={
             }else{
                 //console.log("No glyph for "+c);
             }
-        */
+            */
             this.translate(-w);
             width+=w;
         }
@@ -161,26 +161,28 @@ var Path={
         this.nodes.push(n);
     },
     scale: function(scale){
-        for(var i in this.nodes){                               if(this.nodes[i].x)
-            this.nodes[i].x*=scale;                             if(this.nodes[i].y)
-            this.nodes[i].y*=scale;
+        for(var i in this.nodes){
+            if(this.nodes[i].x) this.nodes[i].x*=scale;
+            if(this.nodes[i].y) this.nodes[i].y*=scale;
         }
     },
     translate: function(dx,dy){
-        /*for(var i in this.nodes){                               if(this.nodes[i].x && dx)
-            this.nodes[i].x+=dx;                                if(this.nodes[i].y && dy)
-            this.nodes[i].y+=dy;
+        /*for(var i in this.nodes){
+            if(this.nodes[i].x && dx) this.nodes[i].x+=dx;
+            if(this.nodes[i].y && dy) this.nodes[i].y+=dy;
         }*/
-        for(var i in this.nodes){                               if(this.nodes[i].x || !dx)if(this.nodes[i].y || !dy){
-            this.nodes[i].x+=dx;                                
-            this.nodes[i].y+=dy;
-            break;
-        }}
+        for(var i in this.nodes){
+            if((this.nodes[i].x || !dx) && (this.nodes[i].y || !dy)){
+                this.nodes[i].x+=dx;                                
+                this.nodes[i].y+=dy;
+                break;
+            }
+        }
     },
     wobble: function(a){
-        for(var i in this.nodes){                               if(this.nodes[i].x)
-            this.nodes[i].x+=this.rand(a);                      if(this.nodes[i].y)
-            this.nodes[i].y+=this.rand(a);
+        for(var i in this.nodes){
+            if(this.nodes[i].x) this.nodes[i].x+=this.rand(a);
+            if(this.nodes[i].y) this.nodes[i].y+=this.rand(a);
         }
     },
     
@@ -191,14 +193,14 @@ var Path={
     var face = this.face = data.face, ligatureCache = [], wordSeparators = {
         ' ': 1,
         '\u00a0': 1,
-    	'\u3000': 1
+        '\u3000': 1,
 	};
 
 	this.glyphs = (function(glyphs) {
         
 		var key, fallbacks = {
 			'\u2011': '\u002d',
-			'\u00ad': '\u2011'
+			'\u00ad': '\u2011',
 		};
 		for (key in fallbacks) {
 			if (!hasOwnProperty(fallbacks, key)) continue;

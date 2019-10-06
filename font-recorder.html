@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 	<head>
 		<title>Font Recorder</title>
 		<meta charset="utf-8">
@@ -10,11 +10,9 @@
 		<style>
 			* {
 				user-select: none;
-				-moz-user-select: none;
-				-webkit-user-select: none;
 				cursor: default;
 				font-family: Arial, Helvetica;
-				-webkit-transition: all .8s ease-in-out;
+				transition: all .8s ease-in-out;
 				text-align: center;
 				vertical-align: center;
 			}
@@ -36,7 +34,7 @@
 				stroke-width: 1px;
 			}
 			#bar * {
-				-webkit-transition: all .2s ease-in-out;
+				transition: all .2s ease-in-out;
 				cursor: pointer;
 			}
 			sep {
@@ -73,14 +71,14 @@
 			}
 			.start-recording {
 				color: #A00;
-				-webkit-animation: pulse-red 1s ease-in-out 1;
+				animation: pulse-red 1s ease-in-out 1;
 			}
 			.stop-recording {
 				color: #A00;
-				-webkit-animation: pulse-red 1s ease-in-out infinite;
-				-webkit-animation-delay: .0s;
+				animation: pulse-red 1s ease-in-out infinite;
+				animation-delay: .0s;
 			}
-			@-webkit-keyframes pulse-red {
+			@keyframes pulse-red {
 				0%,100% { text-shadow: 0 0 10px transparent; color: #A00;}
 				50% { text-shadow: 0 0 5px #F00; color: #F00;}
 			}
@@ -95,7 +93,7 @@
 			}
 			#glyph-prompt.highlight {
 				color: black;
-				text-shadow: 0 0 5px white, 5px 5px 10px orange inset;
+				/* text-shadow: 0 0 5px white, 5px 5px 10px orange; */
 			}
 			#bar {
 				padding: 5px;
@@ -128,7 +126,7 @@
 				pointer-events: all;
 			}
 			#json {
-				-webkit-transition: none;
+				transition: none;
 				position: fixed;z-index:40;
 				left:10%;right:10%;top:50px;bottom:50px;
 				color: white;
@@ -137,8 +135,6 @@
 				resize: none;
 				font-size: 3px;
 				user-select: text;
-				-moz-user-select: text;
-				-webkit-user-select: text;
 			}
 			.select {
 				position: relative;
@@ -287,10 +283,10 @@
 				}(f);
 			}
 			$changeFont.appendChild($ul);
-			dontClose="!";
+			dontClose=true;
 			$changeFont.onclick=function(){
 				$ul.className = $ul.className=="hidden"?"":"hidden";
-				dontClose="!";
+				dontClose=true;
 			};
 			var f="cursive";
 			$lis=$$(".select li");
@@ -409,9 +405,9 @@
 				}, 10);
 			}
 			function stopRecording(){
-			   if(timeout){
-				   clearInterval(timeout);
-			   }
+				if(timeout){
+					clearInterval(timeout);
+				}
 			}
 			function clearGlyph(){
 				font.glyphs[currentChr]=[];
